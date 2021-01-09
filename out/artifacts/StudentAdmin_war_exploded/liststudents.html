@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>显示学生信息</title>
+    <link rel="stylesheet" href="./bootstrap-4.5.0-dist/css/bootstrap.css">
+    <script  src="./js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+
+<hr>
+<div style="text-align: center">
+    <select>
+        <option value ="stuno">学号</option>
+        <option value ="stuname">姓名</option>
+        <option value="classes">班级</option>
+        <option value="gender">性别</option>
+        <option value="department">专业</option>
+        <option value="dormno">宿舍</option>
+    </select>
+    请输入：<input type="text" id="userinput" name="userinput">
+    <button type="submit" id="submit" name="submit" value="查找">查找</button>
+</div>
+<hr>
+<table id="students" class="table-bordered table table-striped">
+    <tr>
+        <td>学号</td>
+        <td>姓名</td>
+        <td>班级</td>
+        <td>性别</td>
+        <td>专业</td>
+        <td>电话</td>
+        <td>宿舍</td>
+        <td>照片</td>
+        <td>删除</td>
+        <td>修改</td>
+    </tr>
+</table>
+<script>
+    init();
+    // 使用jqury重写
+    function init() {
+        //jqury ajax
+        $.ajax({
+            url: "ListStudentServlet2",
+            type: "POST",
+            data: {},
+            //请求成功后执行回调函数
+            success: function (data) {
+                var students = JSON.parse(data);
+                console.log(students)
+                init_student_list("students",students)
+            }
+            , error: function () {
+                console.log("wrong")
+            }
+        })
+    }
+    function init_student_list(item_name,item) {
+        $("#"+item_name+" tr:not(:first)").empty();
+        for (index of item) {
+            var tr = "<tr>"
+            for (var i in index) {
+                // tr+="<td>"+index[i]+"</td>"
+                if (i == "photoPath") {
+                    if (index[i] == null) {
+                    } else
+                        tr += "<td><img width='50px' src='" + index[i] + "'/></td>"
+                } else {
+                    tr += "<td>" + index[i] + "</td>"
+                }
+            }
+            tr += "<td><a href='javascript:delete_student(" + index["stuNo"] + ")'>删除</a></td>"
+            tr += "<td><a href='javascript:change_student(" + index["stuNo"] + ")'>修改</a></td>"
+            tr += "</tr>"
+            //获取表格最后一行，after插入
+            $("#"+item_name+" tr:last").after(tr)
+        }
+    }
+
+    $("#submit").click(function () {
+        $.ajax({
+            url:"SearchStuInfoServlet",
+            type:"POST",
+            data:{
+                "stuno":$("#userinput").val()},
+            // dataType:"json",
+            //请求成功后执行回调函数
+            success:function(data) {
+                var stu = JSON.parse(data);
+                console.log(stu)
+                console.log("how are you")
+                init_student_list("students",stu);
+            }
+            ,error:function (){
+                console.log("wrong")
+            }
+        });
+    })
+
+    function delete_student(stuno) {
+        $.ajax({
+            url:"DeleteStudentServlet",
+            type:"POST",
+            data:{
+                "stuno":stuno},
+            // dataType:"json",
+            //请求成功后执行回调函数
+
+            success:function(data){
+                init()
+            }
+            ,error:function () {
+                console.log("wrong_delete_error")
+            }
+        })
+    }
+    function change_student(stuno) {
+        window.location.href="updatestudent.jsp?stuno="+stuno;
+    }
+
+</script>
+
+</body>
+</html>

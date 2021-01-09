@@ -1,0 +1,17 @@
+.box{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    /*实现块元素百分比下居中*/
+    width:450px;
+    padding:50px;
+
+}
+.box h1{
+    margin:0 0 30px;
+    padding:0;
+    color: #110808;
+    text-align:center;
+}
+

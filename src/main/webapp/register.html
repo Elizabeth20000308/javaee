@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/reset.css"/>
+    <script  src="./js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+<div id="particles-js">
+    <div class="login">
+        <div class="login-top">
+            注册
+        </div>
+        <div class="login-center clearfix">
+            <div class="login-center-img"><img src="img/name.png"/></div>
+            <div class="login-center-input">
+                <input id="username" type="text" name="username" value="" placeholder="请输入您的用户名" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的用户名'"/>
+                <div class="login-center-input-text">用户名</div>
+            </div>
+        </div>
+        <div class="login-center clearfix">
+            <div class="login-center-img"><img src="img/password.png"/></div>
+            <div class="login-center-input">
+                <input id="password" type="password" name="password" value="" placeholder="请输入您的密码" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'"/>
+                <div class="login-center-input-text">密码</div>
+            </div>
+        </div>
+        <div class="login-center clearfix">
+            <div class="login-center-img"><img src="img/password.png"/></div>
+            <div class="login-center-input">
+                <input id="password2" type="password" name="password" value="" placeholder="再一次输入您的密码" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'"/>
+                <div class="login-center-input-text">密码</div>
+            </div>
+        </div>
+        <div class="login-button" id="submit">
+            注册
+        </div>
+        <div>
+            <a href="index.html"class="login-center" style="text-align: center ;top: 50px">已注册？点击登陆</a>
+        </div>
+    </div>
+    <div class="sk-rotating-plane"></div>
+</div>
+<script src="js/particles.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/page_jump.js"></script>
+<script>
+    console.log("hh")
+    $("#submit").click(function (){
+        console.log($("#username").val())
+        if ($("#username").val()!=""&&($("#password").val()!="")&&$("#password2").val()!=""){
+            if ($("#password").val()==$("#password2").val()){
+                checkUser()
+            }
+            else{
+                alert("两次密码不同，请重新输入");
+                $("#password").val("");
+                $("#password2").val("");
+            }
+        }
+        else{
+            alert("信息不能为空");
+        }
+    })
+    function checkUser(){
+        $.ajax({
+            url:"GetUserServlet",
+            type:"POST",
+            data:{
+                "userName":$("#username").val(),
+            },
+            success:function (data) {
+                var parse = JSON.parse(data);
+                if (parse["result"]=="ok"){
+                    alert("用户名已存在，请重新输入")
+                    $("#userName").val="";
+                }else{
+                    register()
+                }
+            },error:function () {
+                console.log("login_error")
+            }
+        })
+    }
+    function register(){
+        $.ajax({
+            url:"RegisterServlet",
+            type:"POST",
+            data:{
+                "username":$("#username").val(),
+                "password":$("#password").val()
+            },
+            success:function (data) {
+                var parse = JSON.parse(data);
+                console.log(parse)
+                if (parse["result"]=="ok"){
+                    success_alert()
+                    window.location.href="index.html";
+                }else{
+                    alert("注册失败，请重新输入")
+                }
+            },error:function () {
+                console.log("login_error")
+            }
+        })
+    }
+
+</script>
+</body>
+</html>
